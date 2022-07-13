@@ -24,6 +24,7 @@ class ESPProvision {
     private let session: ESPSession
     private let transportLayer: ESPCommunicable
     private let securityLayer: ESPCodeable
+    var wifiConnectedIp4Addr: String? = nil
 
     public static let CONFIG_TRANSPORT_KEY = "transport"
     public static let CONFIG_SECURITY_KEY = "security1"
@@ -232,6 +233,10 @@ class ESPProvision {
         let configResponse = try Espressif_WiFiConfigPayload(serializedData: decryptedResponse)
         responseStatus = configResponse.respGetStatus.staState
         failReason = configResponse.respGetStatus.failReason
+        
+        if (responseStatus == .connected){
+            self.wifiConnectedIp4Addr = configResponse.respGetStatus.connected.ip4Addr
+        }
 
         return (responseStatus, failReason)
     }
